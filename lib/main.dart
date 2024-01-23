@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.light,
       theme: ThemeManager().lightTheme,
       darkTheme: ThemeManager().darkTheme,
-      home: const ScreenDisplayNotes(),
+      home:  ScreenDisplayNotes(),
       routes: {
         ScreenNoteEdit.addRouteName:(context) =>  ScreenNoteEdit(screenMode: ActionType.addNote),
         ScreenNoteEdit.editRouteName:(context) =>  ScreenNoteEdit(screenMode: ActionType.editNote)

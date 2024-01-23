@@ -15,14 +15,34 @@ class ScreenNoteEdit extends StatelessWidget {
   final ActionType screenMode;
   String? id;
 
+  //Edit Note Details
+  String? presentTitle;
+  String? presentContent;
+
   //controller
   final _titleController = TextEditingController();
   final _noteContentController = TextEditingController();
-  ScreenNoteEdit({super.key, required this.screenMode, this.id});
 
+  ScreenNoteEdit(
+      {super.key,
+      required this.screenMode,
+      this.id,
+      this.presentTitle,
+      this.presentContent});
+
+  //keys
+  final formKey1 = GlobalKey<FormState>();
+  final formKey2 = GlobalKey<FormState>();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    //Collect note data
+    if (screenMode == ActionType.editNote) {
+      _titleController.text = presentTitle!;
+      _noteContentController.text = presentContent!;
+    }
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: (screenMode == ActionType.addNote)
             ? const Text('Add Note')
@@ -33,7 +53,7 @@ class ScreenNoteEdit extends StatelessWidget {
               onPressed: () {
                 switch (screenMode) {
                   case ActionType.addNote:
-                    saveData(context);
+                    saveData();
 
                     break;
 
@@ -53,25 +73,37 @@ class ScreenNoteEdit extends StatelessWidget {
           child: Column(
             children: [
               // Title text field
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  hintText: 'Title',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+              Form(
+                key: formKey1,
+                child: TextFormField(
+                  validator: (title) => (title == null || title.isEmpty)
+                      ? 'Title is Emplty'
+                      : null,
+                  controller: _titleController,
+                  decoration: InputDecoration(
+                    hintText: 'Title',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 10.0),
               // Flexible widget with flex factor 1 to make the Note field take all remaining space
-              Flexible(
-                child: TextFormField(
-                  controller: _noteContentController,
-                  maxLines: 200,
-                  decoration: InputDecoration(
-                    hintText: 'Note',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+              Form(
+                key: formKey2,
+                child: Flexible(
+                  child: TextFormField(
+                    validator: (content) => (content == null || content.isEmpty)
+                        ? 'Note is Empty'
+                        : null,
+                    controller: _noteContentController,
+                    maxLines: 200,
+                    decoration: InputDecoration(
+                      hintText: 'Note',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
                     ),
                   ),
                 ),
@@ -84,13 +116,21 @@ class ScreenNoteEdit extends StatelessWidget {
   }
   //Save button Function
 
-  Future<void> saveData(BuildContext context) async {
-    final NoteModel note = NoteModel.create(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: _titleController.text,
-        content: _noteContentController.text);
+  Future<void> saveData() async {
+    if ((formKey1.currentState!.validate()) &&
+        (formKey2.currentState!.validate())) {
+      final NoteModel note = NoteModel.create(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          title: _titleController.text,
+          content: _noteContentController.text);
 
-
-    await NoteAppServer().createNote(note);
+      final returnNote = await NoteAppServer().createNote(note);
+      if (returnNote != null) {
+        //Success
+        Navigator.of(scaffoldKey.currentContext!).pop();
+      } else {
+        //Fail
+      }
+    }
   }
 }

@@ -17,8 +17,14 @@ class Note extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       //tap property
-      onTap: (){
-        Navigator.of(context).pushNamed(ScreenNoteEdit.editRouteName);
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return ScreenNoteEdit(
+            screenMode: ActionType.editNote,
+            presentContent: content,
+            presentTitle: title,
+          );
+        }));
       },
       child: Container(
         padding: const EdgeInsets.all(12.0),
