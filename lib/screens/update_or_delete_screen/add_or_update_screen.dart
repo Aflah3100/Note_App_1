@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_note_app/data/data.dart';
 import 'package:flutter_note_app/data/note_model/note_model.dart';
+import 'package:flutter_note_app/screens/all_notes_screen/widgets/note.dart';
 
 // Action type
 enum ActionType { addNote, editNote }
@@ -58,8 +59,7 @@ class ScreenNoteEdit extends StatelessWidget {
                     break;
 
                   case ActionType.editNote:
-
-                    //Edit Note
+                    editAndSaveData(context);
                     break;
                 }
               },
@@ -128,8 +128,29 @@ class ScreenNoteEdit extends StatelessWidget {
       if (returnNote != null) {
         //Success
         Navigator.of(scaffoldKey.currentContext!).pop();
+        NoteAppServer.instance.getAllNotes();
       } else {
         //Fail
+      }
+    }
+  }
+
+  //edit function
+  Future<void> editAndSaveData(BuildContext context) async {
+    if (_titleController.text.isEmpty && _noteContentController.text.isEmpty) {
+      await Note.deleteNote(id!);
+      Navigator.of(scaffoldKey.currentContext!).pop();
+    } else if (formKey2.currentState!.validate() && formKey1.currentState!.validate()) {
+      final updatedTitle = _titleController.text;
+      final updatedContent = _noteContentController.text;
+      final newNote = NoteModel.create(
+          id: id, title: updatedTitle, content: updatedContent);
+      final updatedNote = await NoteAppServer.instance.updateNote(newNote);
+      if (updatedNote == null) {
+        //failed to update
+        Navigator.of(scaffoldKey.currentContext!).pop();
+      } else {
+        Navigator.of(scaffoldKey.currentContext!).pop();
       }
     }
   }

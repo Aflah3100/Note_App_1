@@ -5,6 +5,8 @@ import 'package:flutter_note_app/screens/all_notes_screen/widgets/note.dart';
 import 'package:flutter_note_app/screens/update_or_delete_screen/add_or_update_screen.dart';
 
 class ScreenDisplayNotes extends StatelessWidget {
+  const ScreenDisplayNotes({super.key});
+
   @override
   Widget build(BuildContext context) {
     //Api Call
@@ -21,6 +23,13 @@ class ScreenDisplayNotes extends StatelessWidget {
               valueListenable: NoteAppServer.instance.noteListNiotifier,
               builder:
                   (BuildContext context, List<NoteModel> noteLists, Widget? _) {
+                if (NoteAppServer.instance.noteListNiotifier.value.isEmpty) {
+                  return const Center(
+                      child: Text(
+                    'Hey Notes!',
+                    style: TextStyle(fontSize: 20),
+                  ));
+                }
                 return GridView.count(
                   crossAxisCount: 2,
                   crossAxisSpacing: 10.0,

@@ -14,7 +14,7 @@ abstract class ApiCalls {
   Future<NoteModel?> createNote(NoteModel note);
 
   // Update Note
-  Future<NoteModel?> updateNote(NoteModel note);
+  Future<NoteModel?> updateNote(NoteModel updatedNote);
 
   // Delete Note
   Future<void> deleteNote(String id);
@@ -54,14 +54,38 @@ class NoteAppServer implements ApiCalls {
 
   @override
   Future<void> deleteNote(String id) async {
-    // TODO: implement deleteNote
-    throw UnimplementedError();
+    final response=await dio.delete(Url().deleteNote.replaceFirst('{id}', id));
+
+    if(response.data==null){
+      return ;
+    }else{
+      final index=noteListNiotifier.value.indexWhere((note) => note.id==id);
+      noteListNiotifier.value.removeAt(index);
+      noteListNiotifier.notifyListeners();
+    }
   }
 
   @override
-  Future<NoteModel?> updateNote(NoteModel note) async {
-    // TODO: implement updateNote
-    throw UnimplementedError();
+  Future<NoteModel?> updateNote(NoteModel updatedNote) async {
+    final response =
+        await dio.put(Url().updateNote, data: updatedNote.toJson());
+    if (response.data == null) {
+      return null;
+    }
+
+    final updatedNewNote = NoteModel.fromJson(jsonDecode(response.data));
+
+    int index =
+        noteListNiotifier.value.indexWhere((note) => note.id == updatedNote.id);
+    if (index == -1) {
+      return null;
+    } else {
+      NoteAppServer.instance.noteListNiotifier.value.removeAt(index);
+      NoteAppServer.instance.noteListNiotifier.value.insert(index, updatedNote);
+      noteListNiotifier.notifyListeners();
+    }
+
+    return updatedNewNote;
   }
 
   @override

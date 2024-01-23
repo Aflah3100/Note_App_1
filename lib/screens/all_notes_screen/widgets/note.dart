@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_note_app/data/data.dart';
 import 'package:flutter_note_app/screens/update_or_delete_screen/add_or_update_screen.dart';
 
 class Note extends StatelessWidget {
@@ -23,6 +24,7 @@ class Note extends StatelessWidget {
             screenMode: ActionType.editNote,
             presentContent: content,
             presentTitle: title,
+            id: id,
           );
         }));
       },
@@ -45,7 +47,9 @@ class Note extends StatelessWidget {
                       fontSize: 20.0, fontWeight: FontWeight.bold),
                 )),
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      deleteNote(id);
+                    },
                     icon: const Icon(
                       Icons.delete,
                       color: Colors.red,
@@ -64,5 +68,10 @@ class Note extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  //delete function
+  static Future<void> deleteNote(String id) async {
+    await NoteAppServer.instance.deleteNote(id);
   }
 }
