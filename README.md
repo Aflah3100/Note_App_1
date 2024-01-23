@@ -1,16 +1,44 @@
-# flutter_note_app
+# Flutter Note Application
 
-A new Flutter project.
+This is a simple Note application developed using Flutter for the front end and Nest.js for the back end. The backend API is designed to handle note-related operations, and the entire backend is organized in the `Backend` folder. The data is stored in a temporary list in the backend and no database is used, Hence the note is not stored permanently in the server.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- **Create**: Easily create and save new notes.
+- **Read**: View and manage your existing notes.
+- **Update**: Edit and update your notes on the fly.
+- **Delete**: Remove unwanted notes effortlessly.
 
-A few resources to get you started if this is your first Flutter project:
+## Backend Setup
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Prerequisites
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- [Node.js](https://nodejs.org/) installed.
+- [Yarn](https://yarnpkg.com/getting-started/install) globally installed.
+
+### Installation
+
+1. Clone the repository.
+
+   ```bash
+   git clone https://github.com/your-username/your-repository.git
+   
+2. Navigate to the Backend folder in your terminal.
+   ```bash
+   cd your-repository/Backend
+3. Install Yarn globally.
+   ```bash
+   npm install --global yarn
+4. Install project dependencies.
+   ```bash
+   yarn install
+5. Run the server
+   ```bash
+   #development mode
+   yarn start:dev
+   #production mode
+   yarn start:prod
+
+   
+
+  
