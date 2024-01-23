@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_note_app/data/data.dart';
+import 'package:flutter_note_app/data/note_model/note_model.dart';
 
 // Action type
 enum ActionType { addNote, editNote }
@@ -12,6 +14,10 @@ class ScreenNoteEdit extends StatelessWidget {
   // Action
   final ActionType screenMode;
   String? id;
+
+  //controller
+  final _titleController = TextEditingController();
+  final _noteContentController = TextEditingController();
   ScreenNoteEdit({super.key, required this.screenMode, this.id});
 
   @override
@@ -22,6 +28,24 @@ class ScreenNoteEdit extends StatelessWidget {
             ? const Text('Add Note')
             : const Text('Edit Note'),
         centerTitle: true,
+        actions: [
+          TextButton.icon(
+              onPressed: () {
+                switch (screenMode) {
+                  case ActionType.addNote:
+                    saveData(context);
+
+                    break;
+
+                  case ActionType.editNote:
+
+                    //Edit Note
+                    break;
+                }
+              },
+              icon: const Icon(Icons.save),
+              label: const Text('Save'))
+        ],
       ),
       body: SafeArea(
         child: Padding(
@@ -30,6 +54,7 @@ class ScreenNoteEdit extends StatelessWidget {
             children: [
               // Title text field
               TextFormField(
+                controller: _titleController,
                 decoration: InputDecoration(
                   hintText: 'Title',
                   border: OutlineInputBorder(
@@ -41,6 +66,7 @@ class ScreenNoteEdit extends StatelessWidget {
               // Flexible widget with flex factor 1 to make the Note field take all remaining space
               Flexible(
                 child: TextFormField(
+                  controller: _noteContentController,
                   maxLines: 200,
                   decoration: InputDecoration(
                     hintText: 'Note',
@@ -55,5 +81,16 @@ class ScreenNoteEdit extends StatelessWidget {
         ),
       ),
     );
+  }
+  //Save button Function
+
+  Future<void> saveData(BuildContext context) async {
+    final NoteModel note = NoteModel.create(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: _titleController.text,
+        content: _noteContentController.text);
+
+
+    await NoteAppServer().createNote(note);
   }
 }
